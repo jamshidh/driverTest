@@ -1,0 +1,80 @@
+{-# LANGUAGE
+      LambdaCase
+    , OverloadedStrings
+    , RecordWildCards
+#-}
+
+module Main where
+
+import Bindings.Libusb
+import Control.Monad
+import Data.Maybe
+import qualified Data.Text as Text
+import Data.Traversable
+import qualified Data.Vector as V
+import System.USB.Descriptors
+import System.USB.DeviceHandling
+import System.USB.Enumeration
+import System.USB.Initialization
+import System.USB.IO
+
+main :: IO ()
+main = do
+  ctx <- newCtx
+  devices <- getDevices ctx
+  
+  let controlSetup =
+        ControlSetup {
+          controlSetupRequestType = Standard
+        , controlSetupRecipient   = ToDevice
+        , controlSetupRequest     = c'LIBUSB_REQUEST_SET_CONFIGURATION
+        , controlSetupValue       = 1
+        , controlSetupIndex       = 0
+        }
+
+  deviceHandle <- openDevice $ devices V.! 2
+  print devices
+  for (V.toList devices) $ \device -> do
+    displayDeviceDesc device
+  print =<< getLanguages deviceHandle
+  putStrLn "#########################################"
+  val <- readInterrupt deviceHandle (EndpointAddress 0 In) 1000 1000
+  val <- readControl deviceHandle controlSetup 1000 1000
+  print val
+
+
+
+
+displayDeviceDesc::Device->IO ()
+displayDeviceDesc device = do
+  deviceHandle <- openDevice device
+  DeviceDesc{..} <- getDeviceDesc device
+  
+  putStrLn "Device Descriptor:"
+  putStrLn $ "  USBSpecReleaseNumber: " ++ show deviceUSBSpecReleaseNumber
+  putStrLn $ "  Class: " ++ show deviceClass
+  putStrLn $ "  SubClass: " ++ show deviceSubClass
+  putStrLn $ "  Protocol: " ++ show deviceProtocol
+  putStrLn $ "  MaxPacketSize0: " ++ show deviceMaxPacketSize0
+  putStrLn $ "  VendorId: " ++ show deviceVendorId
+  putStrLn $ "  ProductId: " ++ show deviceProductId
+  putStrLn $ "  ReleaseNumber: " ++ show deviceReleaseNumber
+  
+  manufacturer <- getString deviceHandle deviceManufacturerStrIx
+
+  putStrLn $ "  Manufacturer: " ++ fromMaybe "-" manufacturer
+
+  product <- getString deviceHandle deviceProductStrIx
+  
+  putStrLn $ "  Product: " ++ fromMaybe "-" product
+
+  serialNumber <- getString deviceHandle deviceSerialNumberStrIx
+  putStrLn $ "  SerialNumber: " ++ fromMaybe "-" serialNumber
+  
+  putStrLn $ "  NumConfigs: " ++ show deviceNumConfigs
+
+getString::DeviceHandle->Maybe StrIx->IO (Maybe String)
+getString deviceHandle = \case
+  Nothing -> return Nothing
+  Just i ->
+     fmap (Just . Text.unpack) $ getStrDescFirstLang deviceHandle i 1000
