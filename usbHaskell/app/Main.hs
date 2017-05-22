@@ -21,6 +21,7 @@ import System.USB.Initialization
 import System.USB.IO
 import Text.Printf
 
+import qualified Config as Config
 import qualified DeviceDesc as Device
 
 main :: IO ()
@@ -53,20 +54,19 @@ main = do
   return ()
 
 
-{-
 displayConfigDesc::Device->Word8->IO ()
 displayConfigDesc device configNumber = do
-  configDesc@ConfigDesc{..} <- getConfigDesc device configNumber
+  Config.Config{..} <- Config.getConfig device configNumber
   
   putStrLn $ "  Config " ++ show configNumber ++ " Descriptor:"
-  putStrLn $ "    configValue: " ++ show configValue
-  putStrLn $ "    configStrIx: " ++ show configStrIx
-  putStrLn $ "    configAttribs: " ++ show configAttribs
-  putStrLn $ "    configMaxPower: " ++ show configMaxPower
-  putStrLn $ "    configInterfaces: " ++ show configInterfaces
-  putStrLn $ "    configExtra: " ++ show configExtra
---  print configDesc
--}
+  putStrLn $ "    configValue: " ++ show value
+  putStrLn $ "    configStrIx: " ++ show strIx
+  putStrLn $ "    configAttribs: " ++ show attribs
+  putStrLn $ "    configMaxPower: " ++ show maxPower
+  putStrLn $ "    configInterfaces: " ++ show interfaces
+  putStrLn $ "    configExtra: " ++ show extra
+
+
 
 displayDeviceDesc::Device->IO ()
 displayDeviceDesc device = do

@@ -16,8 +16,11 @@ executable usbHaskell-exe
   ghc-options:         -threaded -rtsopts -with-rtsopts=-N
   build-depends:       base
                      , bindings-libusb
+                     , bytestring
                      , text
                      , usb
                      , vector
   other-modules:       DeviceDesc
+                       Config
+                       String
   default-language:    Haskell2010
