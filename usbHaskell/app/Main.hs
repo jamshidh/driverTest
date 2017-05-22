@@ -12,11 +12,13 @@ import Data.Maybe
 import qualified Data.Text as Text
 import Data.Traversable
 import qualified Data.Vector as V
+import Numeric
 import System.USB.Descriptors
 import System.USB.DeviceHandling
 import System.USB.Enumeration
 import System.USB.Initialization
 import System.USB.IO
+import Text.Printf
 
 main :: IO ()
 main = do
@@ -56,8 +58,7 @@ displayDeviceDesc device = do
   putStrLn $ "  SubClass: " ++ show deviceSubClass
   putStrLn $ "  Protocol: " ++ show deviceProtocol
   putStrLn $ "  MaxPacketSize0: " ++ show deviceMaxPacketSize0
-  putStrLn $ "  VendorId: " ++ show deviceVendorId
-  putStrLn $ "  ProductId: " ++ show deviceProductId
+  printf "  ID: %04x:%04x\n" deviceVendorId deviceProductId
   putStrLn $ "  ReleaseNumber: " ++ show deviceReleaseNumber
   
   manufacturer <- getString deviceHandle deviceManufacturerStrIx
