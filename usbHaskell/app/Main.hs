@@ -12,6 +12,7 @@ import Data.Maybe
 import qualified Data.Text as Text
 import Data.Traversable
 import qualified Data.Vector as V
+import Data.Word
 import Numeric
 import System.USB.Descriptors
 import System.USB.DeviceHandling
@@ -38,6 +39,9 @@ main = do
   print devices
   for (V.toList devices) $ \device -> do
     displayDeviceDesc device
+    --displayConfigDesc device 0
+
+    
   print =<< getLanguages deviceHandle
   putStrLn "#########################################"
   val <- readInterrupt deviceHandle (EndpointAddress 0 In) 1000 1000
@@ -45,6 +49,19 @@ main = do
   print val
 
 
+
+displayConfigDesc::Device->Word8->IO ()
+displayConfigDesc device configNumber = do
+  configDesc@ConfigDesc{..} <- getConfigDesc device configNumber
+  
+  putStrLn $ "  Config " ++ show configNumber ++ " Descriptor:"
+  putStrLn $ "    configValue: " ++ show configValue
+  putStrLn $ "    configStrIx: " ++ show configStrIx
+  putStrLn $ "    configAttribs: " ++ show configAttribs
+  putStrLn $ "    configMaxPower: " ++ show configMaxPower
+  putStrLn $ "    configInterfaces: " ++ show configInterfaces
+  putStrLn $ "    configExtra: " ++ show configExtra
+--  print configDesc
 
 
 displayDeviceDesc::Device->IO ()
