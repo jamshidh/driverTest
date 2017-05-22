@@ -5,12 +5,9 @@
 module DeviceDesc where
 
 import Data.Word
-import qualified Data.Text as Text
 import qualified System.USB.Descriptors as Low
 import System.USB.DeviceHandling
 import System.USB.Enumeration
-import System.USB.Initialization
-import System.USB.IO
 
 import String
 
@@ -21,8 +18,8 @@ data DeviceDesc =
   subClass :: !Word8,
   protocol :: !Word8,
   maxPacketSize0 :: !Word8,
-  vendorId :: !Low.VendorId,	
-  productId :: !Low.ProductId,	
+  vendorId :: !Low.VendorId,
+  productId :: !Low.ProductId,
   releaseNumber :: !Low.ReleaseNumber,
   manufacturer :: !(Maybe String),
   product :: !(Maybe String),
@@ -45,8 +42,8 @@ getDeviceDesc device = do
     subClass=deviceSubClass,
     protocol=deviceProtocol,
     maxPacketSize0=deviceMaxPacketSize0,
-    vendorId=deviceVendorId,	
-    productId=deviceProductId,	
+    vendorId=deviceVendorId,
+    productId=deviceProductId,
     releaseNumber=deviceReleaseNumber,
     manufacturer = m,
     product = p,

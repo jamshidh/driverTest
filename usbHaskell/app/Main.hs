@@ -6,19 +6,18 @@
 
 module Main where
 
-import Bindings.Libusb
-import Control.Monad
+import Prelude hiding (product)
+
+--import Bindings.Libusb
 import Data.Maybe
-import qualified Data.Text as Text
 import Data.Traversable
 import qualified Data.Vector as V
 import Data.Word
-import Numeric
 --import System.USB.Descriptors
-import System.USB.DeviceHandling
+--import System.USB.DeviceHandling
 import System.USB.Enumeration
 import System.USB.Initialization
-import System.USB.IO
+--import System.USB.IO
 import Text.Printf
 
 import qualified Config as Config
@@ -28,7 +27,8 @@ main :: IO ()
 main = do
   ctx <- newCtx
   devices <- getDevices ctx
-  
+
+  {-
   let controlSetup =
         ControlSetup {
           controlSetupRequestType = Standard
@@ -37,12 +37,14 @@ main = do
         , controlSetupValue       = 1
         , controlSetupIndex       = 0
         }
+  -}
 
-  deviceHandle <- openDevice $ devices V.! 2
+  --deviceHandle <- openDevice $ devices V.! 2
   print devices
-  for (V.toList devices) $ \device -> do
-    displayDeviceDesc device
-    --displayConfigDesc device 0
+  _ <- 
+    for (V.toList devices) $ \device -> do
+      displayDeviceDesc device
+      --displayConfigDesc device 0
 
     
   --print =<< getLanguages deviceHandle

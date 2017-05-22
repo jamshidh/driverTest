@@ -10,8 +10,6 @@ import Data.Word
 import qualified System.USB.Descriptors as Low
 import System.USB.DeviceHandling
 import System.USB.Enumeration
-import System.USB.Initialization
-import System.USB.IO
 
 import String
 
