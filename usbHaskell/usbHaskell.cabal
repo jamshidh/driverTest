@@ -19,4 +19,5 @@ executable usbHaskell-exe
                      , text
                      , usb
                      , vector
+  other-modules:       DeviceDesc
   default-language:    Haskell2010

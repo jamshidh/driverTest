@@ -14,12 +14,14 @@ import Data.Traversable
 import qualified Data.Vector as V
 import Data.Word
 import Numeric
-import System.USB.Descriptors
+--import System.USB.Descriptors
 import System.USB.DeviceHandling
 import System.USB.Enumeration
 import System.USB.Initialization
 import System.USB.IO
 import Text.Printf
+
+import qualified DeviceDesc as Device
 
 main :: IO ()
 main = do
@@ -42,14 +44,16 @@ main = do
     --displayConfigDesc device 0
 
     
-  print =<< getLanguages deviceHandle
-  putStrLn "#########################################"
-  val <- readInterrupt deviceHandle (EndpointAddress 0 In) 1000 1000
-  val <- readControl deviceHandle controlSetup 1000 1000
-  print val
+  --print =<< getLanguages deviceHandle
+  --putStrLn "#########################################"
+  --val <- readInterrupt deviceHandle (EndpointAddress 0 In) 1000 1000
+  --val <- readControl deviceHandle controlSetup 1000 1000
+  --print val
+
+  return ()
 
 
-
+{-
 displayConfigDesc::Device->Word8->IO ()
 displayConfigDesc device configNumber = do
   configDesc@ConfigDesc{..} <- getConfigDesc device configNumber
@@ -62,37 +66,21 @@ displayConfigDesc device configNumber = do
   putStrLn $ "    configInterfaces: " ++ show configInterfaces
   putStrLn $ "    configExtra: " ++ show configExtra
 --  print configDesc
-
+-}
 
 displayDeviceDesc::Device->IO ()
 displayDeviceDesc device = do
-  deviceHandle <- openDevice device
-  DeviceDesc{..} <- getDeviceDesc device
+  Device.DeviceDesc{..} <- Device.getDeviceDesc device
   
   putStrLn "Device Descriptor:"
-  putStrLn $ "  USBSpecReleaseNumber: " ++ show deviceUSBSpecReleaseNumber
-  putStrLn $ "  Class: " ++ show deviceClass
-  putStrLn $ "  SubClass: " ++ show deviceSubClass
-  putStrLn $ "  Protocol: " ++ show deviceProtocol
-  putStrLn $ "  MaxPacketSize0: " ++ show deviceMaxPacketSize0
-  printf "  ID: %04x:%04x\n" deviceVendorId deviceProductId
-  putStrLn $ "  ReleaseNumber: " ++ show deviceReleaseNumber
-  
-  manufacturer <- getString deviceHandle deviceManufacturerStrIx
-
+  putStrLn $ "  USBSpecReleaseNumber: " ++ show usbSpecReleaseNumber
+  putStrLn $ "  Class: " ++ show class'
+  putStrLn $ "  SubClass: " ++ show subClass
+  putStrLn $ "  Protocol: " ++ show protocol
+  putStrLn $ "  MaxPacketSize0: " ++ show maxPacketSize0
+  printf "  ID: %04x:%04x\n" vendorId productId
+  putStrLn $ "  ReleaseNumber: " ++ show releaseNumber
   putStrLn $ "  Manufacturer: " ++ fromMaybe "-" manufacturer
-
-  product <- getString deviceHandle deviceProductStrIx
-  
   putStrLn $ "  Product: " ++ fromMaybe "-" product
-
-  serialNumber <- getString deviceHandle deviceSerialNumberStrIx
   putStrLn $ "  SerialNumber: " ++ fromMaybe "-" serialNumber
-  
-  putStrLn $ "  NumConfigs: " ++ show deviceNumConfigs
-
-getString::DeviceHandle->Maybe StrIx->IO (Maybe String)
-getString deviceHandle = \case
-  Nothing -> return Nothing
-  Just i ->
-     fmap (Just . Text.unpack) $ getStrDescFirstLang deviceHandle i 1000
+  putStrLn $ "  NumConfigs: " ++ show numConfigs
