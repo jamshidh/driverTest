@@ -6,12 +6,14 @@
 module DeviceDesc where
 
 import Data.Aeson
+import Data.Traversable
 import Data.Word
 import GHC.Generics
 import qualified System.USB.Descriptors as Low
 import System.USB.DeviceHandling
 import System.USB.Enumeration
 
+import Config
 import String
 
 data DeviceDesc =
@@ -27,7 +29,7 @@ data DeviceDesc =
   manufacturer :: !(Maybe String),
   product :: !(Maybe String),
   serialNumber :: !(Maybe String),
-  numConfigs :: !Word8
+  configs::[Config]
   } deriving (Generic)
 
 instance ToJSON DeviceDesc where
@@ -39,6 +41,7 @@ getDeviceDesc device = do
   m <- getString h deviceManufacturerStrIx
   p <- getString h deviceProductStrIx
   s <- getString h deviceSerialNumberStrIx
+  c <- for [0..deviceNumConfigs-1] $ Config.getConfig device
   return
     DeviceDesc {
     usbSpecReleaseNumber=deviceUSBSpecReleaseNumber,
@@ -52,7 +55,7 @@ getDeviceDesc device = do
     manufacturer = m,
     product = p,
     serialNumber = s,
-    numConfigs = deviceNumConfigs
+    configs=c
     }
   
 

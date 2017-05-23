@@ -9,6 +9,8 @@ module Main where
 import Prelude hiding (product)
 
 --import Bindings.Libusb
+import Data.Aeson.Encode.Pretty
+import qualified Data.ByteString.Lazy.Char8 as BLC
 import Data.Maybe
 import Data.Traversable
 import qualified Data.Vector as V
@@ -72,8 +74,11 @@ displayConfigDesc device configNumber = do
 
 displayDeviceDesc::Device->IO ()
 displayDeviceDesc device = do
-  Device.DeviceDesc{..} <- Device.getDeviceDesc device
-  
+  d@Device.DeviceDesc{..} <- Device.getDeviceDesc device
+
+  putStrLn $ BLC.unpack $ encodePretty d
+
+  {-
   putStrLn "Device Descriptor:"
   putStrLn $ "  USBSpecReleaseNumber: " ++ show usbSpecReleaseNumber
   putStrLn $ "  Class: " ++ show class'
@@ -86,3 +91,4 @@ displayDeviceDesc device = do
   putStrLn $ "  Product: " ++ fromMaybe "-" product
   putStrLn $ "  SerialNumber: " ++ fromMaybe "-" serialNumber
   putStrLn $ "  NumConfigs: " ++ show numConfigs
+  -}

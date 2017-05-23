@@ -16,6 +16,7 @@ executable usbHaskell-exe
   ghc-options:         -threaded -rtsopts -with-rtsopts=-N
   build-depends:       base
                      , aeson
+                     , aeson-pretty
                      , bindings-libusb
                      , bytestring
                      , text
