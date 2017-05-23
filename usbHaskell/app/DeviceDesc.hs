@@ -1,10 +1,13 @@
 {-# LANGUAGE
-      RecordWildCards
+      DeriveGeneric
+    , RecordWildCards
 #-}
 
 module DeviceDesc where
 
+import Data.Aeson
 import Data.Word
+import GHC.Generics
 import qualified System.USB.Descriptors as Low
 import System.USB.DeviceHandling
 import System.USB.Enumeration
@@ -25,8 +28,9 @@ data DeviceDesc =
   product :: !(Maybe String),
   serialNumber :: !(Maybe String),
   numConfigs :: !Word8
-  }
+  } deriving (Generic)
 
+instance ToJSON DeviceDesc where
 
 getDeviceDesc::Device->IO DeviceDesc
 getDeviceDesc device = do
